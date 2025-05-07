@@ -1,9 +1,19 @@
 import React from 'react'
+import LoginForm from './components/Login'
+import Registre from './components/Registre'
+import { Route, Routes, BrowserRouter } from 'react-router-dom';
 
-function App() {
+const App = () => {
   return (
-    <div className='font-bold text-3xl bg-amber-500 text-center'>App</div>
-  )
+    <div>
+      <BrowserRouter>
+        <Routes> 
+          <Route path='/' element={<LoginForm />} />
+          <Route path='/signup' element={<Registre />} />
+        </Routes>
+      </BrowserRouter>
+    </div>
+  );
 }
 
-export default App
+export default App;
