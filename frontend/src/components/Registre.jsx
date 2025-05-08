@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ChevronLeft } from 'lucide-react';
+import { Axis3DIcon, ChevronLeft, Import } from 'lucide-react';
+import axios from 'axios';
 
 
 function RegistreForm() {
@@ -68,28 +69,38 @@ function RegistreForm() {
     return isValid;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     if (loading) return;
 
     setSuccessMessage('');
     setErrors({});
 
-//     if (validateForm()) {
-//       setLoading(true);
+    if (validateForm()) {
+      setLoading(true);
 
-//       try {
-//         localStorage.setItem('userData', JSON.stringify(formData));
-//         setSuccessMessage('Inscription réussie! Redirection en cours...');
-//         setTimeout(() => {
-//           window.location.href = '/login';
-//         }, 2000);
-//       } catch (error) {
-//         setErrors(prev => ({ ...prev, general: 'Une erreur est survenue' }));
-//       } finally {
-//         setLoading(false);
-//       }
-//     }
+      try {
+        setSuccessMessage('Inscription réussie! Redirection en cours...');
+        const response = await axios.post('http://127.0.0.1:3000/api/auth/register', formData, {
+        headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.status === 201) {
+          setSuccessMessage('Inscription réussie! Redirection en cours...');
+          setTimeout(() => {
+            navigate('/login');  
+          }, 2000);
+        } else {
+          setErrors({ ...errors, general: response.data.message || 'Une erreur est survenue' });
+        }
+      } catch (error) {
+        setErrors({ ...errors, general: error.response?.data?.message || 'Une erreur est survenue lors de l\'inscription' });
+      } finally {
+        setLoading(false);
+      }
+    }
   };
 
   const handleChange = (e) => {
