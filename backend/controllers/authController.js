@@ -53,9 +53,11 @@ const login = async (req, res) => {
       user: {
         id: user._id,
         email: user.email,
-        username: user.username
+        username: user.username,
+        role: user.role // 👈 important pour la redirection
       }
     });
+    
   } catch (error) {
     console.error('Erreur serveur:', error);
     res.status(500).json({ message: 'Erreur serveur, veuillez réessayer plus tard' });

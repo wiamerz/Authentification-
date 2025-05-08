@@ -55,7 +55,7 @@ function LoginForm() {
 
     if (validateForm()) {
       try {
-        const response = await axios.post('http://127.0.0.1:5000/api/auth/login', formData, {
+        const response = await axios.post('http://localhost:3000/api/auth/login', formData, {
           headers: { 'Content-Type': 'application/json' }
         });
 
