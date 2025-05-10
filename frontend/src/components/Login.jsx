@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
+import { useAuth } from '../provider/AuthProvider';
 
 const LoginForm = () => {
   const navigate = useNavigate();
   const { setToken } = useAuth();
-  
 
   const [formData, setFormData] = useState({
     email: '',
@@ -65,15 +65,21 @@ const LoginForm = () => {
           const { token, user } = response.data;
 
           setSuccessMessage('Connexion réussie ! Redirection en cours...');
+          
+          // Stockage cohérent des informations d'authentification
           localStorage.setItem('token', token);
           localStorage.setItem('user', JSON.stringify(user));
+          
+          // Mise à jour du contexte d'authentification
+          setToken(token); 
 
           setTimeout(() => {
             if (user.role === 'admin') {
-              navigate('/admin');
-            } else {
               navigate('/profile');
-            }
+             }
+            // } else {
+            //   navigate('/profile');
+            // }
           }, 1500);
         }
       } catch (error) {
@@ -82,19 +88,10 @@ const LoginForm = () => {
     }
   };
 
-  const handleLogin = () => {
-    setToken("this is a test token");
-    navigate("/", { replace: true });
-  };
-
-  setTimeout(() => {
-    handleLogin();
-  }, 3 * 1000);
-
   return (
     <div className="min-h-screen w-full bg-[rgb(108,88,76)] flex flex-col justify-center items-center px-4">
       <button
-        onClick={() => navigate('/')}
+        onClick={() => navigate('/registre')}
         className="flex items-start justify-start text-[rgb(246,233,215)] hover:text-[rgb(224,203,173)] transition-colors mb-6"
       >
         <ChevronLeft size={20} />
@@ -142,7 +139,7 @@ const LoginForm = () => {
         </form>
 
         <p className="text-center text-black mt-4">
-          Pas encore de compte ? <a href="/signup" className="text-[rgb(161,193,129)]">Créer un compte</a>
+          Pas encore de compte ? <a href="/registre" className="text-[rgb(161,193,129)]">Créer un compte</a>
         </p>
       </div>
     </div>

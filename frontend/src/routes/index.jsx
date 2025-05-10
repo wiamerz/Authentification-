@@ -1,64 +1,60 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { useAuth } from "../provider/AuthProvider";
 import { ProtectedRoute } from "./ProtectedRoute";
+import Profile from "../components/Profile";
+import Logout from "../components/Logout";
+import RegistreForm from "../components/Registre";
+import LoginForm from "../components/Login";
 
 const Routes = () => {
   const { token } = useAuth();
 
-  // Define public routes accessible to all users
+  // Définir des routes publiques (accessibles à tous)
   const routesForPublic = [
     {
-      path: "/service",
-      element: <div>Service Page</div>,
-    },
-    {
-      path: "/about-us",
-      element: <div>About Us</div>,
-    },
+      path: "/",
+      element: <LoginForm />,
+    }
   ];
 
-  // Define routes accessible only to authenticated users
+  // Définir des routes accessibles uniquement aux utilisateurs authentifiés
   const routesForAuthenticatedOnly = [
     {
       path: "/",
-      element: <ProtectedRoute />, // Wrap the component in ProtectedRoute
+      element: <ProtectedRoute />, 
       children: [
         {
-          path: "/",
-          element: <div>User Home Page</div>,
-        },
-        {
           path: "/profile",
-          element: <div>User Profile</div>,
+          element: <Profile />,
         },
         {
           path: "/logout",
-          element: <div>Logout</div>,
+          element: <Logout />,
         },
       ],
     },
   ];
 
-  // Define routes accessible only to non-authenticated users
+  // Définir des routes accessibles uniquement aux utilisateurs non authentifiés
   const routesForNotAuthenticatedOnly = [
     {
-      path: "/",
-      element: <div>Home Page</div>,
+      path: "/registre",
+      element: <RegistreForm />,
     },
     {
       path: "/login",
-      element: <div>Login</div>,
+      element: <LoginForm />,
     },
   ];
 
-  // Combine and conditionally include routes based on authentication status
+  // Combiner et inclure conditionnellement les routes en fonction du statut d'authentification
   const router = createBrowserRouter([
     ...routesForPublic,
     ...(!token ? routesForNotAuthenticatedOnly : []),
     ...routesForAuthenticatedOnly,
   ]);
 
-  // Provide the router configuration using RouterProvider
+  // Fournir la configuration du routeur à l'aide de RouterProvider
   return <RouterProvider router={router} />;
 };
 

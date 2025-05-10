@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
-import { Axis3DIcon, ChevronLeft, Import } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 import axios from 'axios';
+import { useAuth } from '../provider/AuthProvider';
+import { useNavigate } from 'react-router-dom';
 
+const RegistreForm = () => {
+  const { setToken } = useAuth();
+  const navigate = useNavigate();
 
-function RegistreForm() {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
     password: '',
     confirmPassword: '',
     number: '',
-    role: '', 
+    role: '',
   });
 
   const [errors, setErrors] = useState({});
@@ -69,7 +73,7 @@ function RegistreForm() {
     return isValid;
   };
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (loading) return;
 
@@ -80,17 +84,18 @@ function RegistreForm() {
       setLoading(true);
 
       try {
-        setSuccessMessage('Inscription réussie! Redirection en cours...');
         const response = await axios.post('http://127.0.0.1:3000/api/auth/register', formData, {
-        headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
         });
 
         if (response.status === 201) {
-          setSuccessMessage('Inscription réussie! Redirection en cours...');
+          
+          const { token } = response.data;
+          if (token) setToken(token);
+
+          setSuccessMessage('Inscription réussie ! Redirection en cours...');
           setTimeout(() => {
-            navigate('/login');  
+            navigate('/login');
           }, 2000);
         } else {
           setErrors({ ...errors, general: response.data.message || 'Une erreur est survenue' });
@@ -110,143 +115,132 @@ function RegistreForm() {
   };
 
   return (
-
-    <div className='bg-[rgb(108,88,76)]'>
-      <button 
+    <div className="bg-[rgb(108,88,76)] min-h-screen">
+      <div className="max-w-2xl mx-auto py-10 px-4">
+        <button
           onClick={() => navigate('/login')}
-          className="flex items-start justify-start text-[rgb(246,233,215)] hover:text-[rgb(224,203,173)] transition-colors mb-6"
+          className="flex items-center text-[rgb(246,233,215)] hover:text-[rgb(224,203,173)] mb-6"
         >
           <ChevronLeft size={20} />
-          <span> Retour </span>
+          <span className="ml-2">Retour</span>
         </button>
-    <div className="min-h-screen bg-[rgb(108,88,76)] flex items-center justify-center px-4">
 
-        
-      <div className="bg-[rgb(246,233,215)] p-10 rounded-lg shadow-lg w-full max-w-2xl">
+        <div className="bg-[rgb(246,233,215)] p-10 rounded-lg shadow-lg">
+          <h2 className="text-2xl font-bold mb-6 text-center">Inscription</h2>
 
+          {successMessage && (
+            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded mb-4">
+              {successMessage}
+            </div>
+          )}
 
-        <h2 className="text-2xl font-bold mb-6 text-center">Inscription</h2>
+          {errors.general && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
+              {errors.general}
+            </div>
+          )}
 
-        {successMessage && (
-          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-2 rounded mb-4">
-            {successMessage}
-          </div>
-        )}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Username */}
+            <div>
+              <label className="block text-black font-medium">Nom d'utilisateur</label>
+              <input
+                name="username"
+                type="text"
+                value={formData.username}
+                onChange={handleChange}
+                disabled={loading}
+                className={`w-full p-2 bg-[rgb(252,243,231)] border-b ${errors.username ? 'border-red-500' : 'border-black'} rounded-lg text-black`}
+              />
+              {errors.username && <p className="text-red-500 text-sm">{errors.username}</p>}
+            </div>
 
-        {errors.general && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4">
-            {errors.general}
-          </div>
-        )}
+            {/* Email */}
+            <div>
+              <label className="block text-black font-medium">Email</label>
+              <input
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleChange}
+                disabled={loading}
+                className={`w-full p-2 bg-[rgb(252,243,231)] border-b ${errors.email ? 'border-red-500' : 'border-black'} rounded-lg text-black`}
+              />
+              {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+            </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-            
-          
-          <div>
-            <label htmlFor="username" className="block text-black font-medium">Nom d'utilisateur</label>
-            <input
-              id="username"
-              name="username"
-              type="text"
-              value={formData.username}
-              onChange={handleChange}
+            {/* Phone */}
+            <div>
+              <label className="block text-black font-medium">Numéro de téléphone</label>
+              <input
+                name="number"
+                type="text"
+                value={formData.number}
+                onChange={handleChange}
+                disabled={loading}
+                className={`w-full p-2 bg-[rgb(252,243,231)] border-b ${errors.number ? 'border-red-500' : 'border-black'} rounded-lg text-black`}
+              />
+              {errors.number && <p className="text-red-500 text-sm">{errors.number}</p>}
+            </div>
+
+            {/* Password */}
+            <div>
+              <label className="block text-black font-medium">Mot de passe</label>
+              <input
+                name="password"
+                type="password"
+                value={formData.password}
+                onChange={handleChange}
+                disabled={loading}
+                className={`w-full p-2 bg-[rgb(252,243,231)] border-b ${errors.password ? 'border-red-500' : 'border-black'} rounded-lg text-black`}
+              />
+              {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+            </div>
+
+            {/* Confirm Password */}
+            <div>
+              <label className="block text-black font-medium">Confirmer le mot de passe</label>
+              <input
+                name="confirmPassword"
+                type="password"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                disabled={loading}
+                className={`w-full p-2 bg-[rgb(252,243,231)] border-b ${errors.confirmPassword ? 'border-red-500' : 'border-black'} rounded-lg text-black`}
+              />
+              {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword}</p>}
+            </div>
+
+            {/* Role */}
+            <div>
+              <label className="block text-black font-medium">Rôle</label>
+              <select
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                disabled={loading}
+                className={`w-full p-2 bg-[rgb(252,243,231)] border-b ${errors.role ? 'border-red-500' : 'border-black'} rounded-lg text-black`}
+              >
+                <option value="">-- Sélectionner --</option>
+                <option value="utilisateur">Utilisateur</option>
+                <option value="admin">Admin</option>
+              </select>
+              {errors.role && <p className="text-red-500 text-sm">{errors.role}</p>}
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              className={`w-full text-white p-2 rounded-lg ${loading ? 'bg-gray-500' : 'bg-[rgb(161,193,129)] hover:bg-[rgb(118,189,47)]'}`}
               disabled={loading}
-              className={`w-full p-2 bg-[rgb(252,243,231)] border-b ${errors.username ? 'border-red-500' : 'border-black'} rounded-lg text-black`}
-            />
-            {errors.username && <p className="text-red-500 text-sm">{errors.username}</p>}
-          </div>
-
-          {/* Email */}
-          <div>
-            <label htmlFor="email" className="block text-black font-medium">Email</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleChange}
-              disabled={loading}
-              className={`w-full p-2 bg-[rgb(252,243,231)] border-b ${errors.email ? 'border-red-500' : 'border-black'} rounded-lg text-black`}
-            />
-            {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
-          </div>
-
-          {/* Téléphone */}
-          <div>
-            <label htmlFor="number" className="block text-black font-medium">Numéro de téléphone</label>
-            <input
-              id="number"
-              name="number"
-              type="text"
-              value={formData.number}
-              onChange={handleChange}
-              disabled={loading}
-              className={`w-full p-2 bg-[rgb(252,243,231)] border-b ${errors.number ? 'border-red-500' : 'border-black'} rounded-lg text-black`}
-            />
-            {errors.number && <p className="text-red-500 text-sm">{errors.number}</p>}
-          </div>
-
-          {/* Mot de passe */}
-          <div>
-            <label htmlFor="password" className="block text-black font-medium">Mot de passe</label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              value={formData.password}
-              onChange={handleChange}
-              disabled={loading}
-              className={`w-full p-2 bg-[rgb(252,243,231)] border-b ${errors.password ? 'border-red-500' : 'border-black'} rounded-lg text-black`}
-            />
-            {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
-          </div>
-
-          {/* Confirmation du mot de passe */}
-          <div>
-            <label htmlFor="confirmPassword" className="block text-black font-medium">Confirmer le mot de passe</label>
-            <input
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              disabled={loading}
-              className={`w-full p-2 bg-[rgb(252,243,231)] border-b ${errors.confirmPassword ? 'border-red-500' : 'border-black'} rounded-lg text-black`}
-            />
-            {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword}</p>}
-          </div>
-
-          {/* Sélection du rôle */}
-          <div>
-            <label htmlFor="role" className="block text-black font-medium">Rôle</label>
-            <select
-              id="role"
-              name="role"
-              value={formData.role}
-              onChange={handleChange}
-              disabled={loading}
-              className={`w-full p-2 bg-[rgb(252,243,231)] border-b ${errors.role ? 'border-red-500' : 'border-black'} rounded-lg text-black`}
             >
-              <option value="">-- Sélectionner --</option>
-              <option value="utilisateur">Utilisateur</option>
-              <option value="admin">Admin</option>
-            </select>
-            {errors.role && <p className="text-red-500 text-sm">{errors.role}</p>}
-          </div>
-
-          {/* Bouton */}
-          <button
-            type="submit"
-            className={`w-full text-white p-2 rounded-lg ${loading ? 'bg-gray-500' : 'bg-[rgb(161,193,129)] hover:bg-[rgb(118,189,47)]'}`}
-            disabled={loading}
-          >
-            {loading ? 'Inscription...' : 'S’inscrire'}
-          </button>
-        </form>
+              {loading ? 'Inscription...' : 'S’inscrire'}
+            </button>
+          </form>
+        </div>
       </div>
     </div>
-  </div>
   );
-}
+};
 
 export default RegistreForm;
