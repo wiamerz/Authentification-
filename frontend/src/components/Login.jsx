@@ -3,8 +3,10 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 
-function LoginForm() {
+const LoginForm = () => {
   const navigate = useNavigate();
+  const { setToken } = useAuth();
+  
 
   const [formData, setFormData] = useState({
     email: '',
@@ -79,6 +81,15 @@ function LoginForm() {
       }
     }
   };
+
+  const handleLogin = () => {
+    setToken("this is a test token");
+    navigate("/", { replace: true });
+  };
+
+  setTimeout(() => {
+    handleLogin();
+  }, 3 * 1000);
 
   return (
     <div className="min-h-screen w-full bg-[rgb(108,88,76)] flex flex-col justify-center items-center px-4">
