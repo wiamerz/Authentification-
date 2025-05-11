@@ -66,20 +66,16 @@ const LoginForm = () => {
 
           setSuccessMessage('Connexion réussie ! Redirection en cours...');
           
-          // Stockage cohérent des informations d'authentification
+         
           localStorage.setItem('token', token);
           localStorage.setItem('user', JSON.stringify(user));
           
-          // Mise à jour du contexte d'authentification
+          
           setToken(token); 
 
           setTimeout(() => {
-            if (user.role === 'admin') {
-              navigate('/profile');
-             }
-            // } else {
-            //   navigate('/profile');
-            // }
+            
+            navigate('/profile');
           }, 1500);
         }
       } catch (error) {

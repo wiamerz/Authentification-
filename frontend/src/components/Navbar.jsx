@@ -6,7 +6,10 @@ const Navbar = () => {
   const navigate = useNavigate();
   const { setToken } = useAuth();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState("");
+  const [user, setUser] = useState({
+    username: "",
+    role: ""
+  });
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -14,18 +17,24 @@ const Navbar = () => {
     
     if (token && userString) {
       setIsLoggedIn(true);
-      const user = JSON.parse(userString);
-      setUsername(user.username || "Utilisateur");
+      try {
+        const userData = JSON.parse(userString);
+        setUser({
+          username: userData.username || "Utilisateur",
+          role: userData.role || ""
+        });
+      } catch (e) {
+        console.error("Erreur lors de la récupération des données utilisateur:", e);
+      }
     } else {
       setIsLoggedIn(false);
     }
   }, []);
 
-  
-  
-    const handleLogout = () => {
-      setToken(null);
-    
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setToken(null);
     navigate("/login");
   };
 
@@ -41,7 +50,12 @@ const Navbar = () => {
         <div className="flex items-center space-x-6">
           {isLoggedIn && (
             <>
-              <span>Bonjour, {username}</span>
+              <span>Bonjour, {user.username}</span>
+              {user.role === "admin" && (
+                <span className="bg-[rgb(246,233,215)] px-3 py-1 rounded-full text-sm font-medium">
+                  Admin
+                </span>
+              )}
               <button
                 onClick={handleLogout}
                 className="hover:text-[rgb(243,180,78)] transition-colors duration-300"
