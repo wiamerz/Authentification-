@@ -11,7 +11,7 @@ const Logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setToken(null);
-    navigate("/login", { replace: true });
+    navigate("/", { replace: true });
   };
 
   useEffect(() => {

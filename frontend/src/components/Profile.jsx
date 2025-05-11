@@ -29,7 +29,7 @@ function Profile() {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setToken(null);
-    navigate("/login");
+    navigate("/");
   };
 
   if (loading) {

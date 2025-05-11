@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useAuth } from '../provider/AuthProvider';
 import { useNavigate } from 'react-router-dom';
 
+
 const RegistreForm = () => {
   const { setToken } = useAuth();
   const navigate = useNavigate();
@@ -95,7 +96,7 @@ const RegistreForm = () => {
 
           setSuccessMessage('Inscription réussie ! Redirection en cours...');
           setTimeout(() => {
-            navigate('/login');
+            navigate('/');
           }, 2000);
         } else {
           setErrors({ ...errors, general: response.data.message || 'Une erreur est survenue' });
@@ -118,7 +119,7 @@ const RegistreForm = () => {
     <div className="bg-[rgb(108,88,76)] min-h-screen">
       <div className="max-w-2xl mx-auto py-10 px-4">
         <button
-          onClick={() => navigate('/login')}
+          onClick={() => navigate('/')}
           className="flex items-center text-[rgb(246,233,215)] hover:text-[rgb(224,203,173)] mb-6"
         >
           <ChevronLeft size={20} />

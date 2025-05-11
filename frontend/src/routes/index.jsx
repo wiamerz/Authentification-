@@ -1,27 +1,38 @@
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { RouterProvider, createBrowserRouter, Navigate } from "react-router-dom";
 import { useAuth } from "../provider/AuthProvider";
 import { ProtectedRoute } from "./ProtectedRoute";
 import Profile from "../components/Profile";
 import Logout from "../components/Logout";
 import RegistreForm from "../components/Registre";
 import LoginForm from "../components/Login";
+import RedirectIfAuth from './RedirectIfAuth';
 
 const Routes = () => {
   const { token } = useAuth();
 
-  // Définir des routes publiques (accessibles à tous)
-  const routesForPublic = [
+  // Routes only for non-authenticated users
+  const routesForNotAuthenticatedOnly = [
     {
       path: "/",
-      element: <LoginForm />,
-    }
+      element: <RedirectIfAuth />,
+      children: [
+        {
+          path: "/login",
+          element: <LoginForm />,
+        },
+        {
+          path: "/registre",
+          element: <RegistreForm />,
+        },
+      ],
+    },
   ];
 
-  // Définir des routes accessibles uniquement aux utilisateurs authentifiés
+  // Routes only for authenticated users
   const routesForAuthenticatedOnly = [
     {
       path: "/",
-      element: <ProtectedRoute />, 
+      element: <ProtectedRoute />,
       children: [
         {
           path: "/profile",
@@ -35,26 +46,22 @@ const Routes = () => {
     },
   ];
 
-  // Définir des routes accessibles uniquement aux utilisateurs non authentifiés
-  const routesForNotAuthenticatedOnly = [
-    {
-      path: "/registre",
-      element: <RegistreForm />,
-    },
-    {
-      path: "/login",
-      element: <LoginForm />,
-    },
-  ];
+  // Root redirect depending on token
+  const defaultRoute = {
+    path: "/",
+    element: token ? <Navigate to="/profile" /> : <Navigate to="/login" />,
+  };
 
-  // Combiner et inclure conditionnellement les routes en fonction du statut d'authentification
   const router = createBrowserRouter([
-    ...routesForPublic,
+    defaultRoute,
     ...routesForNotAuthenticatedOnly,
     ...routesForAuthenticatedOnly,
+    {
+      path: "*",
+      element: <div className="text-center p-10 text-red-600">404 - Page non trouvée</div>,
+    },
   ]);
 
-  // Fournir la configuration du routeur à l'aide de RouterProvider
   return <RouterProvider router={router} />;
 };
 
