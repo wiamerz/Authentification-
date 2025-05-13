@@ -3,6 +3,7 @@ import { ChevronLeft } from 'lucide-react';
 import axios from 'axios';
 import { useAuth } from '../provider/AuthProvider';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 
 const RegistreForm = () => {
@@ -94,7 +95,7 @@ const RegistreForm = () => {
           const { token } = response.data;
           if (token) setToken(token);
 
-          setSuccessMessage('Inscription réussie ! Redirection en cours...');
+          toast.success("Inscription réussie ! Redirection en cours... ", {duration: 2000})
           setTimeout(() => {
             navigate('/');
           }, 2000);

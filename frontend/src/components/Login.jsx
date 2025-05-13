@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft } from 'lucide-react';
 import { useAuth } from '../provider/AuthProvider';
+import toast from 'react-hot-toast';
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -19,7 +19,6 @@ const LoginForm = () => {
   });
 
   const [apiError, setApiError] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
 
   const validateForm = () => {
     let isValid = true;
@@ -49,7 +48,6 @@ const LoginForm = () => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
     setApiError('');
-    setSuccessMessage('');
   };
 
   const handleSubmit = async (e) => {
@@ -63,20 +61,18 @@ const LoginForm = () => {
 
         if (response.data.token) {
           const { token, user } = response.data;
-
-          setSuccessMessage('Connexion réussie ! Redirection en cours...');
           
-         
           localStorage.setItem('token', token);
           localStorage.setItem('user', JSON.stringify(user));
           
           
           setToken(token); 
-
+          
+          toast.success("connexion réussie ", {duration: 2000})
           setTimeout(() => {
             
             navigate('/profile');
-          }, 1500);
+          }, 3000);
         }
       } catch (error) {
         setApiError(error.response?.data?.message || 'Erreur lors de la connexion');
@@ -86,13 +82,6 @@ const LoginForm = () => {
 
   return (
     <div className="min-h-screen w-full bg-[rgb(108,88,76)] flex flex-col justify-center items-center px-4">
-      <button
-        onClick={() => navigate('/registre')}
-        className="flex items-start justify-start text-[rgb(246,233,215)] hover:text-[rgb(224,203,173)] transition-colors mb-6"
-      >
-        <ChevronLeft size={20} />
-        <span>Retour</span>
-      </button>
 
       <h1 className="text-4xl md:text-5xl text-white font-bold mb-8 px-6 py-4 rounded-lg">
         Open this 9fol
@@ -102,7 +91,6 @@ const LoginForm = () => {
         <h2 className="text-2xl font-bold text-black mb-6 text-center">Connexion</h2>
 
         {apiError && <p className="text-red-500 text-center mb-4">{apiError}</p>}
-        {successMessage && <p className="text-green-600 text-center mb-4">{successMessage}</p>}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>

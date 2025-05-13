@@ -12,7 +12,7 @@ function Footer() {
             </div>
              
                     <div className="flex justify-center mb-2">
-                  <p>&copy; Tout droits réservés 2025. Wecook.</p>
+                  <p>&copy; Tout droits réservés 2025. l9fol.</p>
               </div>
           </footer>
       </>

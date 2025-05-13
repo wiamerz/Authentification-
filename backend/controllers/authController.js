@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
 // Register function
-const register = async (req, res) => {
+const register = async (req, res) => { 
   console.log('Requête reçue:', req.body); 
   try {
     const { username, email, password, confirmPassword, number, role} = req.body;
@@ -20,19 +20,16 @@ const register = async (req, res) => {
     const user = new User({ username, email, password, number, role });
     console.log('User object before saving:', user); 
 
-    try {
-      await user.save();
-      console.log('User saved successfully'); 
+      await user.save()
+      
       res.status(201).json({ message: 'Utilisateur enregistré avec succès' });
-    } catch (saveError) {
-      console.error('Error saving user:', saveError);
-      res.status(500).json({ message: 'Erreur lors de l\'enregistrement de l\'utilisateur' });
-    }
+    
   } catch (error) {
     console.error('Erreur serveur:', error); 
     res.status(500).json({ message: 'Erreur serveur, veuillez réessayer plus tard' });
   }
 };
+
 
 
 
@@ -54,7 +51,7 @@ const login = async (req, res) => {
         id: user._id,
         email: user.email,
         username: user.username,
-        role: user.role // 👈 important pour la redirection
+        role: user.role 
       }
     });
     
